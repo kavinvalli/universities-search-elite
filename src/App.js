@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
+import Universities from "./Universities";
 
-function App() {
+export default function App() {
+  const [universities, setUniversities] = useState([]);
+  const [name, setName] = useState("");
+
+  function changeName(e) {
+    setName(e.target.value);
+  }
+
+  async function fetchData(e) {
+    e.preventDefault();
+    setUniversities(
+      await (
+        await fetch(`http://universities.hipolabs.com/search?name=${name}`)
+      ).json()
+    );
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form onSubmit={fetchData}>
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={changeName}
+        />
+        <button type="submit">Search</button>
+      </form>
+      <Universities universities={universities} />
     </div>
   );
 }
-
-export default App;
